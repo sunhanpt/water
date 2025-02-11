@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using DG.Tweening;
+using Unity.VisualScripting;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Game
@@ -10,9 +13,13 @@ namespace Game
         public GameObject waterSplash;
         public GameObject waterJet;
         public GameObject waterJetEnd;
+        public Animator bottleAnimator;
+        public Transform bottleTransform;
+        public Transform rootTransform;
         
         private int _validWaterCount = 0;
         private BottleInfo _bottleInfo;
+
         public void InitBottle(BottleInfo bottleInfo)
         {
             _bottleInfo = bottleInfo;
@@ -43,6 +50,21 @@ namespace Game
             return _bottleInfo.waters[_validWaterCount - 1];
         }
 
+        public void WaterOut(Bottle otherBottle, Action<Bottle> onComplete)
+        {
+            MoveToOtherAnim(otherBottle, otherBottle.bottleTransform.position);
+        }
+        
+        private void MoveToOtherAnim(Bottle otherBottle, Vector3 movePosition)
+        {
+            // 播放瓶子移动动画
+            bottleAnimator.Play("BottleOut");
+            rootTransform.DOMove(movePosition, 1.0f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                // 添加完成回调
+            });
+        }
+
         public void PlayPourWaterAnim()
         {
             var waterColor = GetTopWaterColor();
@@ -54,7 +76,7 @@ namespace Game
                 case WaterColor.Red:
                     
                     break;
-            }
+            } 
         }
         
         public void PlaySplashAnim()

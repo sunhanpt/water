@@ -15,6 +15,7 @@ namespace Game
         Orange,
         None
     }
+    [CreateAssetMenu(fileName = "BottleInfo", menuName = "Water/BottleInfo")]
     public class BottleInfo : ScriptableObject
     {
         public WaterColor[] waters = new WaterColor[4];
