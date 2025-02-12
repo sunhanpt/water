@@ -69,8 +69,8 @@ namespace Game
         {
             // End the level
         }
-        
-        public void OnBottleSelect(Bottle bottle)
+
+        private void OnBottleSelect(Bottle bottle)
         {
             // Handle bottle select
             if(_bAnimationPlaying)
@@ -81,16 +81,21 @@ namespace Game
                 _selectedBottles.Add(bottle);
             }
 
-            if (_selectedBottles.Count == 2)
-            {
-                _bAnimationPlaying = true;
-                _selectedBottles[0].WaterOut(_selectedBottles[1], null);
-            }
+            if (_selectedBottles.Count != 2) return;
+            _bAnimationPlaying = true;
+            _selectedBottles[0].WaterOut(_selectedBottles[1], null);
         }
-        
-        public void OnBottleDeselect(Bottle bottle)
+
+        private void OnBottleDeselect(Bottle bottle)
         {
-            // Handle bottle deselect
+            foreach (var selectedBottle in _selectedBottles)
+            {
+                if (selectedBottle == bottle)
+                {
+                    _selectedBottles.Remove(bottle);
+                    break;
+                }
+            }
         }
         
         public void OnAnimationEnd()
