@@ -5,6 +5,12 @@ namespace Game
 {
     public class Level
     {
+        protected struct BottleRuntimeInfo
+        {
+            public Vector3 Position;
+            public Bottle Bottle;
+        }
+        
         private readonly GameObject _bottlePrefab;
         private readonly LevelsLayout _levelsLayout;
         
@@ -43,7 +49,6 @@ namespace Game
         // 根据关卡信息初始化关卡
         private void InitLevel()
         {
-            var levelLayout = _levelsLayout.LevelLayouts[_levelInfo.levelLayout];
             _bottles = new GameObject[this._levelInfo.bottles.Length];
             for (int i = 0; i < this._levelInfo.bottles.Length; i++)
             {
@@ -55,8 +60,7 @@ namespace Game
                     bottleSelect.OnBottleSelect = OnBottleSelect;
                     bottleSelect.OnBottleDeselect = OnBottleDeselect;
                 }
-                var transform = _bottles[i].transform;
-                transform.position = levelLayout.Positions[i];
+                _bottles[i].transform.position = GetBottleLayout(i);
             }
         }
         
@@ -79,9 +83,15 @@ namespace Game
             if (_selectedBottles.Count < 2)
             {
                 _selectedBottles.Add(bottle);
+                if (_selectedBottles.Count == 1)
+                {
+                    var bottleTransform = bottle.gameObject.transform;
+                    bottleTransform.position += DataConf.SelectMoveOffset;
+                }
             }
 
-            if (_selectedBottles.Count != 2) return;
+            if (_selectedBottles.Count != 2) 
+                return;
             _bAnimationPlaying = true;
             _selectedBottles[0].WaterOut(_selectedBottles[1], null);
         }
@@ -92,10 +102,28 @@ namespace Game
             {
                 if (selectedBottle == bottle)
                 {
+                    int bottleId = 0;
+                    for (int i = 0; i < _bottles.Length; i++)
+                    {
+                        if (_bottles[i].GetComponent<Bottle>() == bottle)
+                        {
+                            bottleId = i;
+                            break;
+                        }
+                    }
+                    var levelLayout = _levelsLayout.LevelLayouts[_levelInfo.levelLayout];
+
+                    bottle.gameObject.transform.position = GetBottleLayout(bottleId);
                     _selectedBottles.Remove(bottle);
                     break;
                 }
             }
+        }
+
+        private Vector3 GetBottleLayout(int bottleId)
+        {
+            var levelLayout = _levelsLayout.LevelLayouts[_levelInfo.levelLayout];
+            return levelLayout.Positions[bottleId];
         }
         
         public void OnAnimationEnd()

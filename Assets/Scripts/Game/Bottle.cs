@@ -16,6 +16,8 @@ namespace Game
         public Animator bottleAnimator;
         public Transform bottleTransform;
         public Transform rootTransform;
+        public GameObject fillWater;
+        public GameObject fillWaterTop;
         
         private int _validWaterCount = 0;
         private BottleInfo _bottleInfo;
@@ -52,7 +54,7 @@ namespace Game
 
         public void WaterOut(Bottle otherBottle, Action<Bottle> onComplete)
         {
-            MoveToOtherAnim(otherBottle, otherBottle.bottleTransform.position);
+            MoveToOtherAnim(otherBottle, otherBottle.bottleTransform.position + DataConf.TargetTopOffset);
         }
         
         private void MoveToOtherAnim(Bottle otherBottle, Vector3 movePosition)
@@ -62,6 +64,8 @@ namespace Game
             rootTransform.DOMove(movePosition, 1.0f).SetEase(Ease.Linear).OnComplete(() =>
             {
                 // 添加完成回调
+                fillWater.SetActive(true);
+                fillWaterTop.SetActive(true);
             });
         }
 
