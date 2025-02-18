@@ -20,9 +20,14 @@ namespace Game
         public Transform rootTransform;
         public GameObject fillWater;
         public GameObject fillWaterTop;
+        public GameObject bottleMouth;
+        public GameObject bottleMask;
         
         private int _validWaterCount = 0;
         private BottleInfo _bottleInfo;
+        private bool _bWaterOut = false;
+        private bool _bWaterIn = false;
+        float _waterOutSlider = 0.0f;
 
         public void InitBottle(BottleInfo bottleInfo)
         {
@@ -45,6 +50,15 @@ namespace Game
             
             // 修正水面位置
             CorrectSurfacePosition(_validWaterCount);
+            
+            var animationEvent = bottleAnimator.gameObject.GetComponent<WaterAnimationEvent>();
+            if (animationEvent != null)
+            {
+                animationEvent.OnBeginWaterOutAction = OnBeginWaterOutAnimEvent;
+                animationEvent.OnEndWaterOutAction = OnEndWaterOutAnimEvent;
+                animationEvent.OnBeginWaterInAction = OnBeingWaterInAnimEvent;
+                animationEvent.OnEndWaterInAction = OnEndWaterInAnimEvent;
+            }
         }
         
         public WaterColor GetTopWaterColor()
@@ -66,6 +80,27 @@ namespace Game
             waterSpine.AnimationState.SetAnimation(0, "daoshui_cl", false);
         }
 
+        private void OnBeginWaterOutAnimEvent()
+        {
+            _bWaterOut = true;
+            _waterOutSlider = 0.0f;
+        }
+
+        private void OnEndWaterOutAnimEvent()
+        {
+            _bWaterOut = false;
+        }
+
+        private void OnBeingWaterInAnimEvent()
+        {
+            _bWaterIn = true;
+        }
+
+        private void OnEndWaterInAnimEvent()
+        {
+            _bWaterIn = false;
+        }
+
         private void Update()
         {
             // 瓶子旋转，对水体横向放大。
@@ -84,15 +119,24 @@ namespace Game
             
             waterSurface.transform.localRotation = Quaternion.Inverse(bottleTransform.rotation);
             waterSurface.transform.localScale = new Vector3(xScale * 1.15f, 1, 1);
+
+            if (_bWaterOut)
+            {
+                fillWaterTop.SetActive(true);
+                fillWaterTop.transform.position = bottleMouth.transform.position;
+            }
+            else
+            {
+                fillWaterTop.SetActive(false);
+            }
         }
 
         private void MoveToOtherAnim(Bottle otherBottle, Vector3 movePosition)
         {
-            // 播放瓶子移动动画
-            bottleAnimator.Play("BottleOut");
             rootTransform.DOMove(movePosition, 1.0f).SetEase(Ease.Linear).OnComplete(() =>
             {
-                // 添加完成回调
+                // 播放瓶子移动动画
+                bottleAnimator.Play("BottleOut");
                 fillWater.SetActive(true);
                 fillWaterTop.SetActive(true);
                 

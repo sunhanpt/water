@@ -53,7 +53,15 @@ namespace Game
             for (int i = 0; i < this._levelInfo.bottles.Length; i++)
             {
                 _bottles[i] = Object.Instantiate(_bottlePrefab);
-                _bottles[i].GetComponent<Bottle>().InitBottle(this._levelInfo.bottles[i]);
+                var bottleComponent = _bottles[i].GetComponent<Bottle>();
+                bottleComponent.InitBottle(this._levelInfo.bottles[i]);
+                bottleComponent.bottleMask.GetComponent<SpriteRenderer>().material.SetFloat("_StencilRef", (i + 1) * 1.0f);
+
+                foreach (var bottleWater in bottleComponent.waters)
+                {
+                    bottleWater.GetComponent<SpriteRenderer>().material.SetFloat("_StencilRef", (i + 1 ) * 1.0f);
+                }
+                
                 var bottleSelect = _bottles[i].GetComponent<BottleSelectBehaviour>();
                 if (bottleSelect != null)
                 {
