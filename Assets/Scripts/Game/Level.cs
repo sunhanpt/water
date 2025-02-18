@@ -93,7 +93,7 @@ namespace Game
             if (_selectedBottles.Count != 2) 
                 return;
             _bAnimationPlaying = true;
-            _selectedBottles[0].WaterOut(_selectedBottles[1], null);
+            _selectedBottles[0].WaterOut(_selectedBottles[1], 1,null);
         }
 
         private void OnBottleDeselect(Bottle bottle)
