@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Spine.Unity;
 using UnityEngine;
 
 namespace Game
@@ -19,8 +20,9 @@ namespace Game
         
         private readonly List<Bottle> _selectedBottles;
         private bool _bAnimationPlaying = false;
-        
-        
+        private static readonly int StencilRef = Shader.PropertyToID("_StencilRef");
+
+
         public Level(LevelInfo levelInfo, LevelsLayout levelsLayout, GameObject bottlePrefab)
         {
             if (levelInfo.levelLayout >= levelsLayout.LevelLayouts.Length)
@@ -55,11 +57,16 @@ namespace Game
                 _bottles[i] = Object.Instantiate(_bottlePrefab);
                 var bottleComponent = _bottles[i].GetComponent<Bottle>();
                 bottleComponent.InitBottle(this._levelInfo.bottles[i]);
-                bottleComponent.bottleMask.GetComponent<SpriteRenderer>().material.SetFloat("_StencilRef", (i + 1) * 1.0f);
+
+                var stencil = (i + 1) * 1.0f;
+                bottleComponent.bottleMask.GetComponent<SpriteRenderer>().material.SetFloat(StencilRef, stencil);
+
+                // var waterSurface = bottleComponent.waterSurface;
+                // waterSurface.GetComponent<MeshRenderer>().material = new Material(waterSurface.GetComponent<MeshRenderer>().material);
 
                 foreach (var bottleWater in bottleComponent.waters)
                 {
-                    bottleWater.GetComponent<SpriteRenderer>().material.SetFloat("_StencilRef", (i + 1 ) * 1.0f);
+                    bottleWater.GetComponent<SpriteRenderer>().material.SetFloat(StencilRef, stencil);
                 }
                 
                 var bottleSelect = _bottles[i].GetComponent<BottleSelectBehaviour>();

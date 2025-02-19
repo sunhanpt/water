@@ -28,6 +28,7 @@ namespace Game
         private bool _bWaterOut = false;
         private bool _bWaterIn = false;
         float _waterOutSlider = 0.0f;
+        private Bottle _waterInBottle;
 
         public void InitBottle(BottleInfo bottleInfo)
         {
@@ -59,6 +60,8 @@ namespace Game
                 animationEvent.OnBeginWaterInAction = OnBeingWaterInAnimEvent;
                 animationEvent.OnEndWaterInAction = OnEndWaterInAnimEvent;
             }
+            // TODO：跟进顶部水得颜色播放不同动画。
+            PlayWaterSurfaceAnim("ruchanghuangdong_hs");
         }
         
         public WaterColor GetTopWaterColor()
@@ -71,19 +74,27 @@ namespace Game
         public void WaterOut(Bottle otherBottle, int waterCount, Action<Bottle> onComplete)
         {
             MoveToOtherAnim(otherBottle, otherBottle.bottleTransform.position + DataConf.TargetTopOffset);
-            otherBottle.WaterIn(waterCount, null);
+            _waterInBottle = otherBottle;
+            
         }
 
         public void WaterIn(int waterCount, Action<Bottle> onComplete)
         {
+            // TODO: 跟进当前倒水得颜色修改
+            PlayWaterSurfaceAnim("daoshui_hs");
+        }
+
+        private void PlayWaterSurfaceAnim(string anim)
+        {
             var waterSpine = waterSurface.GetComponent<SkeletonAnimation>();
-            waterSpine.AnimationState.SetAnimation(0, "daoshui_cl", false);
+            waterSpine.AnimationState.SetAnimation(0, anim, false);
         }
 
         private void OnBeginWaterOutAnimEvent()
         {
             _bWaterOut = true;
             _waterOutSlider = 0.0f;
+            _waterInBottle?.WaterIn(0, null);
         }
 
         private void OnEndWaterOutAnimEvent()
@@ -103,23 +114,7 @@ namespace Game
 
         private void Update()
         {
-            // 瓶子旋转，对水体横向放大。
-            var axis = Vector3.zero;
-            bottleTransform.rotation.ToAngleAxis(out float angle, out axis);
-            
-            float xScale = 1.0f / Mathf.Max(0.001f,Mathf.Abs(Mathf.Cos(angle * Mathf.Deg2Rad)));
-            
-            // 水面随着瓶子旋转缩放x方向
-            foreach (var water in waters)
-            {
-                Transform transform1;
-                (transform1 = water.transform.transform).localRotation = Quaternion.Inverse(bottleTransform.rotation);
-                transform1.localScale = new Vector3(xScale * 1.25f, 1, 1);
-            }
-            
-            waterSurface.transform.localRotation = Quaternion.Inverse(bottleTransform.rotation);
-            waterSurface.transform.localScale = new Vector3(xScale * 1.15f, 1, 1);
-
+            CorrectWaterScale();
             if (_bWaterOut)
             {
                 fillWaterTop.SetActive(true);
@@ -192,8 +187,34 @@ namespace Game
         
         private void CorrectSurfacePosition(int validWaterCount)
         {
-            Vector3 splashPos = waters[validWaterCount - 1].transform.position + new Vector3(0, 0.4f, 0);
+            var waterTransform = waters[validWaterCount - 1].transform;
+            Vector3 splashPos = waterTransform.position + new Vector3(0, DataConf.WaterHeight / 2, 0) * waterTransform.localScale.y;
             waterSurface.transform.position = splashPos;
+        }
+
+        private void CorrectWaterScale()
+        {
+            // 瓶子旋转，对水体横向放大。
+            var axis = Vector3.zero;
+            bottleTransform.rotation.ToAngleAxis(out float angle, out axis);
+            
+            float xScale = 1.0f / Mathf.Max(0.001f,Mathf.Abs(Mathf.Cos(angle * Mathf.Deg2Rad)));
+            
+            // 水面随着瓶子旋转缩放x方向
+            foreach (var water in waters)
+            {
+                Transform waterTransform = water.transform.transform;
+                var position = waterTransform.position;
+                waterTransform.localRotation = Quaternion.Inverse(bottleTransform.rotation);
+                // var localPosition = waterTransform.localPosition;
+                // localPosition = new Vector3( DataConf.WaterHeight / 2 * Mathf.Sin(angle * Mathf.Deg2Rad), localPosition.y, localPosition.z);
+                // waterTransform.localPosition = localPosition;
+
+                waterTransform.localScale = new Vector3(xScale * 1f, 1, 1);
+            }
+            
+            waterSurface.transform.localRotation = Quaternion.Inverse(bottleTransform.rotation);
+            waterSurface.transform.localScale = new Vector3(xScale * 1.15f, 1, 1);
         }
     }
 }
