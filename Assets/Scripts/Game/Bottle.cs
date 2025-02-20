@@ -44,7 +44,7 @@ namespace Game
                 if (bottleInfo.waters[i] == WaterColor.None)
                     continue;
                 waters[i].SetActive(true);
-                waters[i].GetComponent<SpriteRenderer>().color = GetWaterColor(bottleInfo.waters[i]);
+                waters[i].GetComponent<WaterItem>().Color = GetWaterColor(bottleInfo.waters[i]);
                 _validWaterCount = i;
             }
             _validWaterCount++;
@@ -200,18 +200,18 @@ namespace Game
             
             float xScale = 1.0f / Mathf.Max(0.001f,Mathf.Abs(Mathf.Cos(angle * Mathf.Deg2Rad)));
             
-            // 水面随着瓶子旋转缩放x方向
-            foreach (var water in waters)
-            {
-                Transform waterTransform = water.transform.transform;
-                var position = waterTransform.position;
-                waterTransform.localRotation = Quaternion.Inverse(bottleTransform.rotation);
-                // var localPosition = waterTransform.localPosition;
-                // localPosition = new Vector3( DataConf.WaterHeight / 2 * Mathf.Sin(angle * Mathf.Deg2Rad), localPosition.y, localPosition.z);
-                // waterTransform.localPosition = localPosition;
-
-                waterTransform.localScale = new Vector3(xScale * 1f, 1, 1);
-            }
+            // // 水面随着瓶子旋转缩放x方向
+            // foreach (var water in waters)
+            // {
+            //     Transform waterTransform = water.transform.transform;
+            //     var position = waterTransform.position;
+            //     waterTransform.localRotation = Quaternion.Inverse(bottleTransform.rotation);
+            //     // var localPosition = waterTransform.localPosition;
+            //     // localPosition = new Vector3( DataConf.WaterHeight / 2 * Mathf.Sin(angle * Mathf.Deg2Rad), localPosition.y, localPosition.z);
+            //     // waterTransform.localPosition = localPosition;
+            //
+            //     waterTransform.localScale = new Vector3(xScale * 1f, 1, 1);
+            // }
             
             waterSurface.transform.localRotation = Quaternion.Inverse(bottleTransform.rotation);
             waterSurface.transform.localScale = new Vector3(xScale * 1.15f, 1, 1);

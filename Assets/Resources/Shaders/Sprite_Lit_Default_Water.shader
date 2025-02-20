@@ -73,7 +73,7 @@ Shader "Water/2D/Sprite-Lit-Default-Water"
                 Varyings o = (Varyings)0;
 
 
-                o.positionCS = TransformObjectToHClip(v.positionOS);
+                o.positionCS = TransformWorldToHClip(v.positionOS);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.lightingUV = half2(ComputeScreenPos(o.positionCS / o.positionCS.w).xy);
 
@@ -135,7 +135,7 @@ Shader "Water/2D/Sprite-Lit-Default-Water"
                 UNITY_SETUP_INSTANCE_ID(attributes);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
-                o.positionCS = TransformObjectToHClip(attributes.positionOS);
+                o.positionCS = TransformWorldToHClip(attributes.positionOS);
                 o.uv = TRANSFORM_TEX(attributes.uv, _MainTex);
                 o.color = attributes.color * _Color * _RendererColor;
                 return o;

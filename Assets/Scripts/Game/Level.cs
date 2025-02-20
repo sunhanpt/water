@@ -66,7 +66,7 @@ namespace Game
 
                 foreach (var bottleWater in bottleComponent.waters)
                 {
-                    bottleWater.GetComponent<SpriteRenderer>().material.SetFloat(StencilRef, stencil);
+                    bottleWater.GetComponent<MeshRenderer>().material.SetFloat(StencilRef, stencil);
                 }
                 
                 var bottleSelect = _bottles[i].GetComponent<BottleSelectBehaviour>();
