@@ -187,9 +187,9 @@ namespace Game
         
         private void CorrectSurfacePosition(int validWaterCount)
         {
-            var waterTransform = waters[validWaterCount - 1].transform;
-            Vector3 splashPos = waterTransform.position + new Vector3(0, DataConf.WaterHeight / 2, 0) * waterTransform.localScale.y;
-            waterSurface.transform.position = splashPos;
+            var waterSuracePos = bottleTransform.TransformPoint(0, DataConf.BottleBottom + DataConf.WaterHeight * validWaterCount + 0.05f, 0);
+            //Vector3 splashPos = waterTransform.position + new Vector3(0, DataConf.WaterHeight / 2, 0) * waterTransform.localScale.y;
+            waterSurface.transform.position = waterSuracePos;
         }
 
         private void CorrectWaterScale()
@@ -214,7 +214,7 @@ namespace Game
             // }
             
             waterSurface.transform.localRotation = Quaternion.Inverse(bottleTransform.rotation);
-            waterSurface.transform.localScale = new Vector3(xScale * 1.15f, 1, 1);
+            waterSurface.transform.localScale = new Vector3(xScale * 1.1f, 1, 1);
         }
     }
 }

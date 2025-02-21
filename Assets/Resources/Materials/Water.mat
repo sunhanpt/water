@@ -42,7 +42,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _EnableExternalAlpha: 0
-    - _StencilComp: 0
+    - _StencilComp: 3
     - _StencilRef: 1
     m_Colors:
     - _Color: {r: 0.1574499, g: 0.85882354, b: 0.035294138, a: 1}
