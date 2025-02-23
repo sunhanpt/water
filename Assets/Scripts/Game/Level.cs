@@ -59,14 +59,19 @@ namespace Game
                 bottleComponent.InitBottle(this._levelInfo.bottles[i]);
 
                 var stencil = (i + 1) * 1.0f;
-                bottleComponent.bottleMask.GetComponent<SpriteRenderer>().material.SetFloat(StencilRef, stencil);
+                var localMaterial = bottleComponent.bottleMask.GetComponent<SpriteRenderer>().material;
+                localMaterial.SetFloat(StencilRef, stencil);
 
                 // var waterSurface = bottleComponent.waterSurface;
                 // waterSurface.GetComponent<MeshRenderer>().material = new Material(waterSurface.GetComponent<MeshRenderer>().material);
 
+                int waterId = 0;
                 foreach (var bottleWater in bottleComponent.waters)
                 {
-                    bottleWater.GetComponent<MeshRenderer>().material.SetFloat(StencilRef, stencil);
+                    waterId++;
+                    var waterMaterial = bottleWater.GetComponent<MeshRenderer>().material;
+                    waterMaterial.SetFloat(StencilRef, stencil);
+                    waterMaterial.renderQueue = 3000 - waterId;
                 }
                 
                 var bottleSelect = _bottles[i].GetComponent<BottleSelectBehaviour>();

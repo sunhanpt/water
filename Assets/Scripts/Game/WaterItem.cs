@@ -54,19 +54,19 @@ namespace Game
                 //if (WaterId <= 3)
                 {
                     float waterCenterY = DataConf.BottleBottom +  WaterId * DataConf.WaterHeight +
-                                         DataConf.WaterQuadHeight / 2;
+                                         DataConf.WaterMeshHeight / 2;
                     float oneDivCos = 1.0f / Mathf.Max(Mathf.Cos(angle * Mathf.Deg2Rad), 0.001f);
                     float halfWaterWidth = 0.5f * DataConf.BottleWidth * oneDivCos;
                     Vector3 center = Bottle.TransformPoint(new Vector3(0, waterCenterY, 0));
-                    Vector3 topCenter = center + Bottle.up * DataConf.WaterQuadHeight / 2 * oneDivCos;
-                    Vector3 bottomCenter = center - Bottle.up * DataConf.WaterQuadHeight / 2 * oneDivCos;
+                    Vector3 topCenter = center + Bottle.up * DataConf.WaterMeshHeight / 2 * oneDivCos;
+                    Vector3 bottomCenter = center - Bottle.up * DataConf.WaterMeshHeight / 2 * oneDivCos;
                     var verts = new Vector3[4];
                     verts[0] = bottomCenter + new Vector3(-halfWaterWidth,  0, 0);
                     verts[1] = bottomCenter + new Vector3(halfWaterWidth,  0, 0);
                     verts[2] = topCenter + new Vector3(halfWaterWidth,  0, 0);
                     verts[3] = topCenter + new Vector3(-halfWaterWidth,  0, 0);
                     verts[1].x = verts[2].x;
-                    verts[3].x = verts[0].x;
+                    //verts[3].x = verts[0].x;
                     if (WaterId == 0)
                     {
                         Vector3 BottleBottomPos = Bottle.TransformPoint(DataConf.BottleWidth / 2, DataConf.BottleBottom,0);

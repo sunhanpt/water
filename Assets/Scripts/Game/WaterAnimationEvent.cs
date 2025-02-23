@@ -26,13 +26,13 @@ public class WaterAnimationEvent : MonoBehaviour
         }
     }
 
-    public void OnBeginWaterIn()
-    {
-        
-    }
-    
-    public void OnEndWaterIn()
-    {
-        
-    }
+    // public void OnBeginWaterIn()
+    // {
+    //     
+    // }
+    //
+    // public void OnEndWaterIn()
+    // {
+    //     
+    // }
 }
