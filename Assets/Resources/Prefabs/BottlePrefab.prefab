@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 288586114678598229}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.2, y: -4.41, z: 0}
-  m_LocalScale: {x: 1, y: 1.5, z: 1}
+  m_LocalPosition: {x: 0.2, y: -0.21, z: 0}
+  m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3415307086641646594}
@@ -818,15 +818,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08cda07438274362b735f09c0d4100ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bottleBody: {fileID: 4095384942995000617}
   waters:
   - {fileID: 7017913263119531196}
   - {fileID: 2254875332011706845}
   - {fileID: 5833991728721979925}
   - {fileID: 4057020470551153853}
   waterSurface: {fileID: 2933012855763961656}
-  waterJet: {fileID: 288586114678598229}
-  waterJetEnd: {fileID: 4135834309941591329}
   bottleAnimator: {fileID: 3226241993387539473}
   bottleTransform: {fileID: 909099971591563559}
   rootTransform: {fileID: 5424985958118041413}

@@ -23,8 +23,6 @@ namespace Game
         private int validWaterCount = 0;
         private BottleInfo bottleInfo;
         private bool bWaterOut = false;
-        private bool bWaterIn = false;
-        private float waterOutSlider = 0.0f;
         private Bottle waterReceiveBottle;
 
         public void InitBottle(BottleInfo bottleInfo)
@@ -46,16 +44,11 @@ namespace Game
             }
             validWaterCount++;
             
-            // 修正水面位置
-            CorrectSurfacePosition(validWaterCount);
-            
             var animationEvent = bottleAnimator.gameObject.GetComponent<WaterAnimationEvent>();
             if (animationEvent != null)
             {
                 animationEvent.OnBeginWaterOutAction = OnBeginWaterOutAnimEvent;
                 animationEvent.OnEndWaterOutAction = OnEndWaterOutAnimEvent;
-                animationEvent.OnBeginWaterInAction = OnBeingWaterInAnimEvent;
-                animationEvent.OnEndWaterInAction = OnEndWaterInAnimEvent;
             }
             // TODO：跟进顶部水得颜色播放不同动画。
             PlayWaterSurfaceAnim("ruchanghuangdong_hs");
@@ -68,7 +61,7 @@ namespace Game
             return bottleInfo.waters[validWaterCount - 1];
         }
 
-        public void WaterOut(Bottle otherBottle, int waterCount, Action<Bottle> onComplete)
+        public void WaterOut(Bottle otherBottle, Action<Bottle> onComplete)
         {
             MoveToOtherAnim(otherBottle, otherBottle.bottleTransform.position + DataConf.TargetTopOffset);
             waterReceiveBottle = otherBottle;
@@ -79,6 +72,11 @@ namespace Game
         {
             // TODO: 跟进当前倒水得颜色修改
             PlayWaterSurfaceAnim("daoshui_hs");
+            
+            waters[validWaterCount].SetActive(true);
+            waters[validWaterCount].GetComponent<WaterItem>().Color = GetWaterColor(GetTopWaterColor());
+            this.waters[validWaterCount].GetComponent<WaterItem>().WaterIn(1.0f);
+            validWaterCount += waterCount;
         }
 
         private void PlayWaterSurfaceAnim(string anim)
@@ -90,8 +88,9 @@ namespace Game
         private void OnBeginWaterOutAnimEvent()
         {
             bWaterOut = true;
-            waterOutSlider = 0.0f;
-            waterReceiveBottle?.WaterIn(0, null);
+            waterReceiveBottle?.WaterIn(1, null);
+            waters[3].GetComponent<WaterItem>().WaterOut(1.0f);
+            
         }
 
         private void OnEndWaterOutAnimEvent()
@@ -99,18 +98,10 @@ namespace Game
             bWaterOut = false;
         }
 
-        private void OnBeingWaterInAnimEvent()
-        {
-            bWaterIn = true;
-        }
-
-        private void OnEndWaterInAnimEvent()
-        {
-            bWaterIn = false;
-        }
-
         private void Update()
         {
+            // 修正水面位置
+            CorrectSurfacePosition(validWaterCount);
             CorrectWaterScale();
             if (bWaterOut)
             {
@@ -180,9 +171,14 @@ namespace Game
         
         private void CorrectSurfacePosition(int validWaterCount)
         {
-            var waterSuracePos = bottleTransform.TransformPoint(0, DataConf.BottleBottom + DataConf.WaterHeight * validWaterCount + 0.1f, 0);
-            //Vector3 splashPos = waterTransform.position + new Vector3(0, DataConf.WaterHeight / 2, 0) * waterTransform.localScale.y;
-            waterSurface.transform.position = waterSuracePos;
+            for (int i = 3; i >= 0; i--)
+            {
+                if (waters[i].activeSelf)
+                {
+                    waterSurface.transform.localPosition = new Vector3(0, waters[i].GetComponent<WaterItem>().waterSurfaceLevel, 0);
+                    break;
+                }
+            }
         }
 
         private void CorrectWaterScale()
